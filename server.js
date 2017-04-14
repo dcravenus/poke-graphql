@@ -1,12 +1,24 @@
 var express = require('express');
 var graphqlHTTP = require('express-graphql');
-var {GraphQLSchema, GraphQLObjectType, GraphQLString} = require('graphql');
+var {GraphQLSchema, GraphQLObjectType, GraphQLString, GraphQLList} = require('graphql');
 var fetch = require('node-fetch');
 
 function fetchJSON(url){
   return fetch(url)
     .then(res => res.json());
 }
+
+const typeType = new GraphQLObjectType({
+  name: 'Type',
+  fields: {
+    id: {
+      type: GraphQLString
+    },
+    name: {
+      type: GraphQLString
+    }
+  }
+});
 
 const pokemonType = new GraphQLObjectType({
   name: 'Pokemon',
@@ -22,6 +34,12 @@ const pokemonType = new GraphQLObjectType({
     },
     height: {
       type: GraphQLString
+    },
+    types: {
+      type: new GraphQLList(typeType),
+      resolve: (pokemon) => pokemon.types.map((typeData)=>{
+        return fetchJSON(typeData.type.url);
+      })
     }
   }
 });
