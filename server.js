@@ -3,14 +3,9 @@ var graphqlHTTP = require('express-graphql');
 var {buildSchema, GraphQLObjectType, GraphQLString, GraphQLSchema, GraphQLList} = require('graphql');
 var fetch = require('node-fetch');
 
-function getType(data){
-  return new Promise(function(resolve){
-    fetch(data.type.url).then(function(data){
-      data.json().then(function(data){
-        resolve(data);
-      });
-    });
-  });
+function getTypeByUrl(url){
+  return fetch(url)
+    .then(res => res.json());
 }
 
 const typeType = new GraphQLObjectType({
@@ -26,37 +21,37 @@ const typeType = new GraphQLObjectType({
       no_damage_to: {
         type: new GraphQLList(typeType),
         resolve: (type) => type.damage_relations.no_damage_to.map((type)=>{
-          return getType({type: type});
+          return getTypeByUrl(type.url);
         })
       },
       no_damage_from: {
         type: new GraphQLList(typeType),
         resolve: (type) => type.damage_relations.no_damage_from.map((type)=>{
-          return getType({type: type});
+          return getTypeByUrl(type.url);
         })
       },
       half_damage_to: {
         type: new GraphQLList(typeType),
         resolve: (type) => type.damage_relations.half_damage_to.map((type)=>{
-          return getType({type: type});
+          return getTypeByUrl(type.url);
         })
       },
       half_damage_from: {
         type: new GraphQLList(typeType),
         resolve: (type) => type.damage_relations.half_damage_from.map((type)=>{
-          return getType({type: type});
+          return getTypeByUrl(type.url);
         })
       },
       double_damage_to: {
         type: new GraphQLList(typeType),
         resolve: (type) => type.damage_relations.double_damage_to.map((type)=>{
-          return getType({type: type});
+          return getTypeByUrl(type.url);
         })
       },
       double_damage_from: {
         type: new GraphQLList(typeType),
         resolve: (type) => type.damage_relations.double_damage_from.map((type)=>{
-          return getType({type: type});
+          return getTypeByUrl(type.url);
         })
       }
     };
@@ -80,7 +75,9 @@ const pokemonType = new GraphQLObjectType({
     },
     types: {
       type: new GraphQLList(typeType),
-      resolve: (pokemon) => pokemon.types.map(getType)
+      resolve: (pokemon) => pokemon.types.map((typeData)=>{
+        return getTypeByUrl(typeData.type.url);
+      })
     }
   }
 });
