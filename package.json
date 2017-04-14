@@ -1,0 +1,9 @@
+{
+  "name": "poke-graphql",
+  "dependencies": {
+    "express": "^4.15.2",
+    "express-graphql": "^0.6.4",
+    "graphql": "^0.9.3",
+    "node-fetch": "^1.6.3"
+  }
+}
