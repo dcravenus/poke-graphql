@@ -1,7 +1,12 @@
 var express = require('express');
 var graphqlHTTP = require('express-graphql');
 var {GraphQLSchema, GraphQLObjectType, GraphQLString} = require('graphql');
+var fetch = require('node-fetch');
 
+function fetchJSON(url){
+  return fetch(url)
+    .then(res => res.json());
+}
 
 const pokemonType = new GraphQLObjectType({
   name: 'Pokemon',
@@ -29,7 +34,8 @@ const queryType = new GraphQLObjectType({
         }
       },
       resolve: (_, {id, name}) => {
-        return {id: id, name: name};
+        const urlParam = id ? id : name;
+        return fetchJSON('http://pokeapi.co/api/v2/pokemon/' + urlParam);
       }
     }
   }
