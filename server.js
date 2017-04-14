@@ -10,13 +10,51 @@ function fetchJSON(url){
 
 const typeType = new GraphQLObjectType({
   name: 'Type',
-  fields: {
-    id: {
-      type: GraphQLString
-    },
-    name: {
-      type: GraphQLString
-    }
+  fields: () => {
+    return {
+      name: {
+        type: GraphQLString
+      },
+      id: {
+        type: GraphQLString
+      },
+      no_damage_to: {
+        type: new GraphQLList(typeType),
+        resolve: (type) => type.damage_relations.no_damage_to.map((type)=>{
+          return fetchJSON(type.url);
+        })
+      },
+      no_damage_from: {
+        type: new GraphQLList(typeType),
+        resolve: (type) => type.damage_relations.no_damage_from.map((type)=>{
+          return fetchJSON(type.url);
+        })
+      },
+      half_damage_to: {
+        type: new GraphQLList(typeType),
+        resolve: (type) => type.damage_relations.half_damage_to.map((type)=>{
+          return fetchJSON(type.url);
+        })
+      },
+      half_damage_from: {
+        type: new GraphQLList(typeType),
+        resolve: (type) => type.damage_relations.half_damage_from.map((type)=>{
+          return fetchJSON(type.url);
+        })
+      },
+      double_damage_to: {
+        type: new GraphQLList(typeType),
+        resolve: (type) => type.damage_relations.double_damage_to.map((type)=>{
+          return fetchJSON(type.url);
+        })
+      },
+      double_damage_from: {
+        type: new GraphQLList(typeType),
+        resolve: (type) => type.damage_relations.double_damage_from.map((type)=>{
+          return fetchJSON(type.url);
+        })
+      }
+    };
   }
 });
 
