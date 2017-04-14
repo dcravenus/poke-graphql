@@ -16,6 +16,12 @@ const pokemonType = new GraphQLObjectType({
     },
     name: {
       type: GraphQLString
+    },
+    weight: {
+      type: GraphQLString
+    },
+    height: {
+      type: GraphQLString
     }
   }
 });
