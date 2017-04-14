@@ -4,9 +4,13 @@ var {buildSchema, GraphQLObjectType, GraphQLString, GraphQLSchema, GraphQLList} 
 var fetch = require('node-fetch');
 
 function getType(data){
-  return {
-    name: data.type.name
-  };
+  return new Promise(function(resolve){
+    fetch(data.type.url).then(function(data){
+      data.json().then(function(data){
+        resolve(data);
+      });
+    });
+  });
 }
 
 const typeType = new GraphQLObjectType({
@@ -15,6 +19,45 @@ const typeType = new GraphQLObjectType({
     return {
       name: {
         type: GraphQLString
+      },
+      id: {
+        type: GraphQLString
+      },
+      no_damage_to: {
+        type: new GraphQLList(typeType),
+        resolve: (type) => type.damage_relations.no_damage_to.map((type)=>{
+          return getType({type: type});
+        })
+      },
+      no_damage_from: {
+        type: new GraphQLList(typeType),
+        resolve: (type) => type.damage_relations.no_damage_from.map((type)=>{
+          return getType({type: type});
+        })
+      },
+      half_damage_to: {
+        type: new GraphQLList(typeType),
+        resolve: (type) => type.damage_relations.half_damage_to.map((type)=>{
+          return getType({type: type});
+        })
+      },
+      half_damage_from: {
+        type: new GraphQLList(typeType),
+        resolve: (type) => type.damage_relations.half_damage_from.map((type)=>{
+          return getType({type: type});
+        })
+      },
+      double_damage_to: {
+        type: new GraphQLList(typeType),
+        resolve: (type) => type.damage_relations.double_damage_to.map((type)=>{
+          return getType({type: type});
+        })
+      },
+      double_damage_from: {
+        type: new GraphQLList(typeType),
+        resolve: (type) => type.damage_relations.double_damage_from.map((type)=>{
+          return getType({type: type});
+        })
       }
     };
   }
