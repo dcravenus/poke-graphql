@@ -1,19 +1,45 @@
 var express = require('express');
 var graphqlHTTP = require('express-graphql');
-var {buildSchema} = require('graphql');
+var {GraphQLSchema, GraphQLObjectType, GraphQLString} = require('graphql');
 
-var schema = buildSchema(`
-  type Query {
-    hello: String
+
+const pokemonType = new GraphQLObjectType({
+  name: 'Pokemon',
+  fields: {
+    id: {
+      type: GraphQLString
+    },
+    name: {
+      type: GraphQLString
+    }
   }
-`);
+});
 
-var root = {hello: ()=> 'Hello world!'};
+const queryType = new GraphQLObjectType({
+  name: 'Query',
+  fields: {
+    pokemon: {
+      type: pokemonType,
+      args: {
+        id: {
+          type: GraphQLString
+        },
+        name: {
+          type: GraphQLString
+        }
+      },
+      resolve: (_, {id, name}) => {
+        return {id: id, name: name};
+      }
+    }
+  }
+});
+
+const schema = new GraphQLSchema({query: queryType});
 
 var app = express();
 app.use('/graphql', graphqlHTTP({
   schema: schema,
-  rootValue: root,
   graphiql: true
 }));
 
